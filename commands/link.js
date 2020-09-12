@@ -1,6 +1,6 @@
 const {
 	invite,
-} = require('./config.json');
+} = require('../config.json');
 
 module.exports = {
 	name: 'link',
