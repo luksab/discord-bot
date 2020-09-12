@@ -31,6 +31,20 @@ client.once('disconnect', () => {
 });
 
 client.on('message', async message => {
+	if (message.author.bot) return;
+	const args = message.content.split(/ +/);
+	if ((args[0] == "I'm" || args[0] == "i'm" || args[0] == "im" || args[0] == "Im") && args.length < 7) {
+		args.shift();
+		message.channel.send("Hello " + args.join(" ") + "! I'm dad.");
+	}
+	if (((args[0] == "I" || args[0] == "i") && args[1] == "am") && args.length < 7) {
+		args.shift();
+		args.shift();
+		message.channel.send("Hello " + args.join(" ") + "! I'm dad.");
+	}
+});
+
+client.on('message', async message => {
 	const args = message.content.slice(prefix.length).split(/ +/);
 	const commandName = args.shift().toLowerCase();
 	const command = client.commands.get(commandName);
