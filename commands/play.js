@@ -1,4 +1,15 @@
 const ytdl = require("ytdl-core");
+const yts = require('yt-search');
+
+function validURL(str) {
+  var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+    '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+    '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+    '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+  return !!pattern.test(str);
+}
 
 module.exports = {
   name: "play",
@@ -21,7 +32,13 @@ module.exports = {
         );
       }
 
-      const songInfo = await ytdl.getInfo(args[1]);
+      let songInfo;
+      if (validURL(args[1])) {
+        songInfo = await ytdl.getInfo(args[1]);
+      } else {
+        let video = await yts(message.content);
+        songInfo = await ytdl.getInfo(video.videos[0].url);//args[1]);
+      }
       const song = {
         title: songInfo.videoDetails.title,
         url: songInfo.videoDetails.video_url
