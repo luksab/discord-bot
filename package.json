@@ -1,7 +1,7 @@
 {
   "name": "music-bot",
   "version": "1.0.0",
-  "repository": "https://github.com/TannerGabriel/discord-music-bot.git",
+  "repository": "https://github.com/luksab/discord-music-bot.git",
   "description": "A simple discord music bot",
   "main": "index.js",
   "scripts": {
@@ -19,6 +19,7 @@
     "discord.js": "^12.0.2",
     "ffmpeg": "0.0.4",
     "fluent-ffmpeg": "^2.1.2",
+    "yt-search": "^2.3.0",
     "ytdl-core": "^3.0.0"
   }
 }
