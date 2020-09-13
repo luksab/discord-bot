@@ -33,15 +33,23 @@ client.once('disconnect', () => {
 
 client.on('message', async message => {
 	if (message.author.bot) return;
-	const args = message.content.split(/ +/);
-	if ((args[0] == "I'm" || args[0] == "i'm" || args[0] == "im" || args[0] == "Im") && args.length < 7) {
-		args.shift();
-		message.channel.send("Hello " + args.join(" ") + "! I'm dad.");
-	}
-	if (((args[0] == "I" || args[0] == "i") && args[1] == "am") && args.length < 7) {
-		args.shift();
-		args.shift();
-		message.channel.send("Hello " + args.join(" ") + "! I'm dad.");
+
+	for (let im of ["I'm", "i'm", "Im", "im", "I am", "i am"]) {
+		let index = message.content.indexOf(im);
+		while (index > 0) {
+			index += im.length;
+			let end = (message.content + ".").indexOf(".", index);
+			if (end > index) {
+				let result = message.content.substring(index, end).trim();
+				if (result.includes(",")){
+					result=result.substring(0,result.indexOf(","));
+				}
+				if (result.length-result.replace(/\ /g,"").length<3){
+					return message.channel.send("Hello " + result + "! "+im+" dad.");
+				}
+			}
+			index=message.content.indexOf(im,index);
+		}
 	}
 });
 
