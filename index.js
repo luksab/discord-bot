@@ -8,6 +8,7 @@ const {
 
 const client = new Client();
 client.commands = new Discord.Collection();
+client.rrRate = 0.05;
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
@@ -55,11 +56,7 @@ client.on('message', async message => {
 
 
 	try {
-		if (commandName == "ban" || commandName == "userinfo" || commandName == "avatar") {
-			command.execute(message, client);
-		} else {
-			command.execute(message);
-		}
+		command.execute(message, client);
 	} catch (error) {
 		console.error(error);
 		message.reply('There was an error trying to execute that command!');

@@ -14,7 +14,7 @@ function validURL(str) {
 module.exports = {
   name: "play",
   description: "Play a song in your channel!",
-  async execute(message) {
+  async execute(message, client) {
     try {
       const args = message.content.split(" ");
       const queue = message.client.queue;
@@ -37,7 +37,12 @@ module.exports = {
         songInfo = await ytdl.getInfo(args[1]);
       } else {
         let video = await yts(message.content);
-        songInfo = await ytdl.getInfo(video.videos[0].url);//args[1]);
+        songInfo = await ytdl.getInfo(video.videos[0].url);
+      }
+      if (Math.random() < client.rrRate) {
+        let video = await yts("never gonna give you up");
+        songInfo = await ytdl.getInfo(video.videos[0].url);
+        message.channel.send("get rickrolled!");
       }
       const song = {
         title: songInfo.videoDetails.title,

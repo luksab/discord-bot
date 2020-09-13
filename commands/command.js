@@ -3,6 +3,7 @@ const { exec } = require("child_process");
 module.exports = {
 	name: 'sh',
 	description: 'I and only I can execute a shell command :P',
+	noHelp: true,
 	execute(message) {
 		if (message.author.id === "393450329724682240")
 			exec(message.content.substring("$sh ".length), (error, stdout, stderr) => {
