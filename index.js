@@ -55,7 +55,7 @@ client.on('message', async message => {
 
 
 	try {
-		if (commandName == "ban" || commandName == "userinfo") {
+		if (commandName == "ban" || commandName == "userinfo" || commandName == "avatar") {
 			command.execute(message, client);
 		} else {
 			command.execute(message);
