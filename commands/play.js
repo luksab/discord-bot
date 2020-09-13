@@ -97,6 +97,7 @@ module.exports = {
         this.play(message, serverQueue.songs[0]);
       })
       .on("error", error => console.error(error));
+    serverQueue.dispatcher = dispatcher;
     dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
     serverQueue.textChannel.send(`Start playing: **${song.title}**`);
   }
