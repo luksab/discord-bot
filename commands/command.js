@@ -8,11 +8,9 @@ module.exports = {
 			exec(message.content.substring("$sh ".length), (error, stdout, stderr) => {
 				if (error) {
 					message.channel.send("error: \n```"+error.message+"```", { split: { "maxLength": 2000 } });
-					return;
 				}
 				if (stderr) {
 					message.channel.send("stderr: \n```"+stderr+"```", { split: { "maxLength": 2000 } });
-					return;
 				}
 				message.channel.send("stdout: \n```"+stdout+"```", { split: { "maxLength": 2000 } });
 			});
