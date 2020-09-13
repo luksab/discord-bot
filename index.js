@@ -45,15 +45,17 @@ client.on('message', async message => {
 });
 
 client.on('message', async message => {
+	if (message.author.bot) return;
 	const args = message.content.slice(prefix.length).split(/ +/);
 	const commandName = args.shift().toLowerCase();
 	const command = client.commands.get(commandName);
 
-	if (message.author.bot) return;
 	if (!message.content.startsWith(prefix)) return;
+	if (!command) return message.reply("unknown command. Type " + prefix + "help for all commands.");
+
 
 	try {
-		if(commandName == "ban" || commandName == "userinfo") {
+		if (commandName == "ban" || commandName == "userinfo") {
 			command.execute(message, client);
 		} else {
 			command.execute(message);
