@@ -34,7 +34,7 @@ client.once('disconnect', () => {
 
 client.on('message', async message => {
 	if (message.author.bot) return;
-	let found = message.content.match(new RegExp(/(?:^| |\.)([Ii](?:'?m| am))((?: \w+){1,3})(?:\.|$)/));
+	let found = message.content.match(new RegExp(/(?:^| |\.)(i(?:'?m| am))((?: \w+){1,3})(?:\.|$)/im));
 	if (found)
 		message.channel.send("Hello" + found[2] + "! " + found[1] + " dad.");
 });
