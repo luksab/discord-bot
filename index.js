@@ -34,11 +34,9 @@ client.once('disconnect', () => {
 
 client.on('message', async message => {
 	if (message.author.bot) return;
-	let found = message.content.match(new RegExp(/(^| |\.)[Ii]('?| a)m( \w+){1,3}(\.|$)/));
-	if (found) {
-		let index = found[0].indexOf("m") + 1;
-		message.channel.send("Hello" + found[0].substring(index).replace(".","") + "! " + found[0].substring(0, index).trim() + " dad.");
-	}
+	let found = message.content.match(new RegExp(/(?:^| |\.)([Ii](?:'?m| am))((?: \w+){1,3})(?:\.|$)/));
+	if (found)
+		message.channel.send("Hello" + found[2] + "! " + found[1] + " dad.");
 });
 
 client.on('message', async message => {
