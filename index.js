@@ -5,6 +5,7 @@ const {
 	prefix,
 	token,
 } = require('./config.json');
+const { PassThrough } = require('stream');
 
 const client = new Client();
 client.commands = new Discord.Collection();
@@ -36,19 +37,27 @@ client.on('message', async message => {
 
 	for (let im of ["I'm", "i'm", "Im", "im", "I am", "i am"]) {
 		let index = message.content.indexOf(im);
-		while (index > 0) {
+		while (index >= 0) {
+			if (index != 0 && message.content[index - 1] != " " ||
+				message.content[index + im.length] != " ") {
+				index = message.content.indexOf(im, index + im.length);
+				continue;
+			}
 			index += im.length;
+
 			let end = (message.content + ".").indexOf(".", index);
 			if (end > index) {
 				let result = message.content.substring(index, end).trim();
-				if (result.includes(",")){
-					result=result.substring(0,result.indexOf(","));
+				if (result.includes(",")) {
+					result = result.substring(0, result.indexOf(","));
 				}
-				if (result.length-result.replace(/\ /g,"").length<3){
-					return message.channel.send("Hello " + result + "! "+im+" dad.");
+				if (result.length - result.replace(/\ /g, "").length < 3) {
+					message.channel.send("Hello " + result + "! " + im + " dad.");
+					return false;
 				}
 			}
-			index=message.content.indexOf(im,index);
+
+			index = message.content.indexOf(im, index);
 		}
 	}
 });
@@ -60,7 +69,10 @@ client.on('message', async message => {
 	const command = client.commands.get(commandName);
 
 	if (!message.content.startsWith(prefix)) return;
-	if (!command) return message.reply("unknown command. Type " + prefix + "help for all commands.");
+	if (!command) {
+		console.log("unknown command. Type " + prefix + "help for all commands.")
+		return message.channel.send("unknown command. Type " + prefix + "help for all commands.");
+	}
 
 
 	try {
