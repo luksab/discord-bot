@@ -109,11 +109,38 @@ module.exports = {
     serverQueue.dispatcher = dispatcher;
     dispatcher.setVolume(0.5);
     serverQueue.textChannel.send(`Start playing: **${song.title}**`);
-    serverQueue.textChannel.send(song.thumbnail.url).then((msg) => {
+    serverQueue.textChannel.send(song.thumbnail.url).then(async (msg) => {
       if (guild.id in imagesToDelete && imagesToDelete[guild.id]) {
         imagesToDelete[guild.id].delete();
       }
       imagesToDelete[guild.id] = msg;
+      console.log("reacting to message", msg.id);
+      await msg.react('⏭️');
+      await msg.react('⏹️');
+      const filter = (reaction, user) => {
+        return ['⏭️', '⏹️'].includes(reaction.emoji.name) && !user.bot;
+      };
+
+      msg.awaitReactions(filter, { max: 1, time: 600000, errors: ['time'] })
+        .then(collected => {
+          const reaction = collected.first();
+          console.log("got reaction to message", reaction.message.id);
+          console.log(reaction.emoji.name);
+          const serverQueu = reaction.message.client.queue.get(reaction.message.guild.id);
+          switch (reaction.emoji.name) {
+            case '⏭️':
+              if (!serverQueu) return reaction.message.channel.send('There is no song that I could skip!');
+              serverQueu.connection.dispatcher.end();
+              break;
+            case '⏹️':
+              serverQueu.songs = [];
+              serverQueu.connection.dispatcher.end();
+              break;
+            default:
+              break;
+          }
+
+        }).catch((e) => console.log(e))
     })
   }
 };
