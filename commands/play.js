@@ -42,10 +42,14 @@ module.exports = {
         let video = await yts(message.content);
         songInfo = await ytdl.getInfo(video.videos[0].url);
       }
-      if (Math.random() < client.rrRate) {
+      if (Math.random() < client.rrRate && !message.dontGetRickRolled) {
         let video = await yts("never gonna give you up");
         songInfo = await ytdl.getInfo(video.videos[0].url);
         message.channel.send("get rickrolled!");
+        setTimeout(()=>{
+          message.dontGetRickRolled = true;
+          this.execute(message, client)
+        }, 1000)
       }
       const song = {
         title: songInfo.videoDetails.title,
@@ -135,6 +139,8 @@ module.exports = {
             case '⏹️':
               serverQueu.songs = [];
               serverQueu.connection.dispatcher.end();
+              imagesToDelete[guild.id] = null;
+              msg.delete();
               break;
             default:
               break;
