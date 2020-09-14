@@ -3,6 +3,7 @@ module.exports = {
   description: "Adjust the volume",
   async execute(message) {
     try {
+      message.delete();
       const args = message.content.split(" ");
 
       const serverQueue = message.client.queue.get(message.guild.id);

@@ -11,11 +11,14 @@ function validURL(str) {
   return !!pattern.test(str);
 }
 
+let imagesToDelete = {};
+
 module.exports = {
   name: "play",
   description: "Play a song in your channel!",
   async execute(message, client) {
     try {
+      message.delete();
       const args = message.content.split(" ");
       const queue = message.client.queue;
       const serverQueue = message.client.queue.get(message.guild.id);
@@ -46,7 +49,8 @@ module.exports = {
       }
       const song = {
         title: songInfo.videoDetails.title,
-        url: songInfo.videoDetails.video_url
+        url: songInfo.videoDetails.video_url,
+        thumbnail: songInfo.videoDetails.thumbnail.thumbnails.pop()
       };
 
       if (!serverQueue) {
@@ -103,7 +107,13 @@ module.exports = {
       })
       .on("error", error => console.error(error));
     serverQueue.dispatcher = dispatcher;
-    dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
+    dispatcher.setVolume(0.5);
     serverQueue.textChannel.send(`Start playing: **${song.title}**`);
+    serverQueue.textChannel.send(song.thumbnail.url).then((msg) => {
+      if (guild.id in imagesToDelete && imagesToDelete[guild.id]) {
+        imagesToDelete[guild.id].delete();
+      }
+      imagesToDelete[guild.id] = msg;
+    })
   }
 };
