@@ -34,31 +34,10 @@ client.once('disconnect', () => {
 
 client.on('message', async message => {
 	if (message.author.bot) return;
-
-	for (let im of ["I'm", "i'm", "Im", "im", "I am", "i am"]) {
-		let index = message.content.indexOf(im);
-		while (index >= 0) {
-			if (index != 0 && message.content[index - 1] != " " ||
-				message.content[index + im.length] != " ") {
-				index = message.content.indexOf(im, index + im.length);
-				continue;
-			}
-			index += im.length;
-
-			let end = (message.content + ".").indexOf(".", index);
-			if (end > index) {
-				let result = message.content.substring(index, end).trim();
-				if (result.includes(",")) {
-					result = result.substring(0, result.indexOf(","));
-				}
-				if (result.length - result.replace(/\ /g, "").length < 3) {
-					message.channel.send("Hello " + result + "! " + im + " dad.");
-					return false;
-				}
-			}
-
-			index = message.content.indexOf(im, index);
-		}
+	let found = message.content.match(new RegExp(/(^| |\.)[Ii]('?| a)m( \w+){1,3}(\.|$)/));
+	if (found) {
+		let index = found[0].indexOf("m") + 1;
+		message.channel.send("Hello" + found[0].substring(index).replace(".","") + "! " + found[0].substring(0, index).trim() + " dad.");
 	}
 });
 
