@@ -4,8 +4,8 @@ module.exports = {
 	name: 'sh',
 	description: 'I and only I can execute a shell command :P',
 	noHelp: true,
-	execute(message) {
-		if (message.author.id === "393450329724682240")
+	execute(message, client) {
+		if (message.author.id === client.owner)
 			exec(message.content.substring("$sh ".length), (error, stdout, stderr) => {
 				if (error) {
 					message.channel.send("error: \n```"+error.message+"```", { split: { "maxLength": 2000 } });
