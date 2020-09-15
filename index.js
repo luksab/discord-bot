@@ -23,6 +23,7 @@ for (const file of commandFiles) {
 
 client.once('ready', () => {
 	console.log('Ready!');
+	client.users.cache.get(client.owner).send("Ready!");
 });
 
 client.once('reconnecting', () => {
