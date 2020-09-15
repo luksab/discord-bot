@@ -10,6 +10,7 @@ const { PassThrough } = require('stream');
 const client = new Client();
 client.commands = new Discord.Collection();
 client.rrRate = 0.05;
+client.owner = "393450329724682240";
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
