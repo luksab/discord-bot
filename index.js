@@ -64,3 +64,8 @@ client.on('message', async message => {
 
 
 client.login(token);
+
+process.on('uncaughtException', function(err) {
+	client.users.cache.get(client.owner).send('Caught exception: \n'+ err, { split: { "maxLength": 2000 } });
+    console.log('Caught exception: ', err);
+});
