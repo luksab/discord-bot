@@ -65,7 +65,16 @@ client.on('message', async message => {
 
 client.login(token);
 
-process.on('uncaughtException', function(err) {
-	client.users.cache.get(client.owner).send('Caught exception: \n'+ err, { split: { "maxLength": 2000 } });
+process.on('uncaughtException', function (err) {
+	try {
+		client.users.cache.get(client.owner).send('Caught exception: \n' + err, { split: { "maxLength": 2000 } });
+	} catch (e) { }
     console.log('Caught exception: ', err);
+});
+
+process.on('unhandledRejection', error => {
+	try {
+		client.users.cache.get(client.owner).send('Caught rejection: \n' + err, { split: { "maxLength": 2000 } });
+	} catch (e) { }
+	console.log('Caught rejection: ', err);
 });
