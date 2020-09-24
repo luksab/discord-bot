@@ -9,7 +9,7 @@ const { PassThrough } = require('stream');
 
 const client = new Client();
 client.commands = new Discord.Collection();
-client.rrRate = 0.05;
+client.rrRate = 0.01;
 client.owner = "393450329724682240";
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
@@ -32,6 +32,13 @@ client.once('reconnecting', () => {
 
 client.once('disconnect', () => {
 	console.log('Disconnect!');
+});
+
+client.on('message', async message => {
+	if (message.author.bot) return;
+	if (message.channel.type !== 'dm') return;
+	if (message.content.match(/^help([\.\!\?]|$)/im))
+		client.commands.get("help").execute(message, client);
 });
 
 client.on('message', async message => {
@@ -72,7 +79,7 @@ process.on('uncaughtException', function (err) {
     console.log('Caught exception: ', err);
 });
 
-process.on('unhandledRejection', error => {
+process.on('unhandledRejection', err => {
 	try {
 		client.users.cache.get(client.owner).send('Caught rejection: \n' + err, { split: { "maxLength": 2000 } });
 	} catch (e) { }
