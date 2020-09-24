@@ -127,7 +127,7 @@ async function sendQuestion(channel, question) {
     return ['👍', '👎'].includes(reaction.emoji.name) && !user.bot;
   };
 
-  const collector = message.createReactionCollector(filter, { time: 60000 });
+  const collector = message.createReactionCollector(filter, { time: 60000 * 10 });
   collector.on('collect', async reaction => {
     let react;
     if (reaction.emoji.name === '👍') {
@@ -169,6 +169,10 @@ async function sendQuestion(channel, question) {
         sendQuestion(message.channel, getQuestion(message.channel.nsfw));
     }
   });
+  
+  collector.on('end', reaction => {
+    message.channel.send("No reactions, so I assume you're not gonna play.");
+  });
 }
 
 
@@ -204,6 +208,7 @@ module.exports = {
 
           const collector = msg.createReactionCollector(filter, { time: 5 * 60000 });
           collector.on('collect', async reaction => {
+            if (games[message.channel.id].state !== "starting") return;
             if (reaction.users.cache.has(games[message.channel.id].starter)) {
               if (!games[message.channel.id])
                 return message.channel.send("No game initialized. Initalize a game with `$neverever init`.");
@@ -224,7 +229,7 @@ module.exports = {
               sendQuestion(message.channel, getQuestion(message.channel.nsfw));
             }
           })
-          collector.on("end", () => { console.log("collector ended."); reactG.remove(); reactS.remove(); })
+          // collector.on("end", () => { console.log("collector ended."); reactG.remove(); reactS.remove(); })
 
           games[message.channel.id].players[message.author.id] = { name: message.author.username, score: 0 };
           games[message.channel.id].message = msg;
