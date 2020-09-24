@@ -20,7 +20,7 @@ exports.getUserImageFromUser = async (user, client) => {
         user = client.users.cache.get(user);
         //console.log(user);
     }
-    let path = './files/userImages/' + user.id + ".png";
+    let path = './files/userImages/' + user.avatar + ".png";
     if (fs.existsSync(path)) {
         return path
     }
