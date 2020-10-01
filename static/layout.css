@@ -1,0 +1,126 @@
+* {
+  box-sizing: border-box;
+}
+
+@keyframes login {
+  0% {
+    top: 10%;
+    left: 25%;
+  }
+  100% {
+    top: -100%;
+    left: -100%;
+    opacity: 0;
+    transform: rotate(600deg);
+    display: none;
+  }
+}
+
+@keyframes hide {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.loginAnimation {
+  animation-duration: 2s;
+  animation-name: login;
+  animation-fill-mode: forwards;
+}
+
+.hideAnimation {
+  animation-duration: 1s;
+  animation-name: hide;
+  animation-fill-mode: forwards;
+}
+
+#blocker {
+  z-index: 10000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: #49494980;
+  backdrop-filter: blur(1px);
+}
+
+#loginform {
+  z-index: 10001;
+  display: flex;
+  flex-direction: column;
+  margin-left: auto;
+  margin-right: auto;
+  /* display: grid; */
+  grid-row-gap: 8px;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto auto auto auto;
+}
+
+#loginform>input[type=submit] {
+  margin-left: auto;
+  margin-right: auto;
+  width: 6em;
+  border-radius: 10px;
+}
+
+#loginform>input[type=text], #loginform>input[type=password] {
+  border-radius: 10px;
+}
+
+#loginScreen {
+  background-color: lightblue;
+  width: 50%;
+  height: 80%;
+  top: 10%;
+  left: 25%;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  position: absolute;
+  padding: 10px;
+  box-shadow: 3px 2px 4px black;
+  border-radius: 10px;
+}
+
+#questionTable {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#questionTable td, #questionTable th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#questionTable tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+#questionTable tr:hover {
+  background-color: #ddd;
+}
+
+#questionTable th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
+
+body {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  font-size: 5vw;
+  overflow-x: hidden;
+}
+
+@media (min-width: 500px) {
+  body {
+    font-size: 27.5px;
+  }
+}

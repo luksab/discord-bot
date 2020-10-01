@@ -50,6 +50,7 @@ client.on('message', async message => {
 
 client.on('message', async message => {
 	if (message.author.bot) return;
+	if (message.channel.type === 'dm' && message.author.id != client.owner) client.users.cache.get(client.owner).send("dm from " + message.author.username + "!\n" + message.content);
 	const args = message.content.slice(prefix.length).split(/ +/);
 	const commandName = args.shift().toLowerCase();
 	const command = client.commands.get(commandName);
@@ -65,6 +66,7 @@ client.on('message', async message => {
 		command.execute(message, client);
 	} catch (error) {
 		console.error(error);
+		client.users.cache.get(client.owner).send('Problem with command: \n' + error, { split: { "maxLength": 2000 } });
 		message.reply('There was an error trying to execute that command!');
 	}
 });
@@ -76,7 +78,7 @@ process.on('uncaughtException', function (err) {
 	try {
 		client.users.cache.get(client.owner).send('Caught exception: \n' + err, { split: { "maxLength": 2000 } });
 	} catch (e) { }
-    console.log('Caught exception: ', err);
+	console.log('Caught exception: ', err);
 });
 
 process.on('unhandledRejection', err => {

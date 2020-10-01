@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>NeverEver</title>
+    <meta charset="UTF-8">
+    <script src="wsLib.js"></script>
+    <script src="index.js"></script>
+    <link rel="stylesheet" type="text/css" href="layout.css" />
+</head>
+
+<body>
+    <div id="blocker">
+        <div id="loginScreen">
+            <form id="loginform" onsubmit="return login(this)">
+                <label for="uname">Username:</label>
+                <input type="text" name="uname" id="uname">
+                <label for="passwd">Password:</label>
+                <input type="password" name="passwd" id="passwd">
+                <input type="submit" value="Submit">
+            </form>
+            Create your login with my <a href="https://discord.com/channels/@me/754424571863760926">bot</a>.
+        </div>
+    </div>
+
+    <select name="guild" id="guildSelector">
+        <option value="134345345">name</option>
+    </select>
+
+    <select name="category" id="categorySelector">
+        <option value="134345345">name</option>
+    </select>
+
+    <table id="questionTable">
+        <thead>
+            <tr>
+                <th>Question</th>
+                <th>nsfw</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody id="questionBody">
+            <tr>
+                <td><input type="text" value="Never have I ever told a lie."></td>
+                <td>x</td>
+                <td><button data-id="[id]">save</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+
+</html>

@@ -5,6 +5,15 @@ const UserImage = require("../util/getUserImage");
 const { MessageAttachment } = require('discord.js');
 
 const { createCanvas, loadImage } = require('canvas');
+const { Pool } = require('pg');
+const { arg } = require('mathjs');
+const pool = new Pool({
+  user: 'node',
+  host: 'localhost',
+  database: 'neverever',
+  password: 'System5362<cut<<',
+  port: 5432,
+})
 
 async function drawCanvas(game) {
   const canvas = createCanvas(500, 500)
@@ -112,10 +121,41 @@ function randomProperty(obj) {
 
 // Tables: 
 //  Questions: Question, Categorie, nsfw
-function getQuestion(nsfw) {
-  let qs = nsfw ? Object.assign({}, questions, NSFWquestions) : Object.assign({}, questions);
-  let q = randomProperty(qs);
-  return q[Math.floor(Math.random() * q.length)]
+// function getQuestion(nsfw) {
+//   let qs = nsfw ? Object.assign({}, questions, NSFWquestions) : Object.assign({}, questions);
+//   let q = randomProperty(qs);
+//   return q[Math.floor(Math.random() * q.length)]
+// }
+
+function getQuestion(gameID) {
+  if (games[gameID].questions.length)
+    return games[gameID].questions.pop().question;
+  else {
+    games[gameID].questions = getQuestions(gameID);
+    return games[gameID].questions.pop().question;
+  }
+}
+
+
+async function getQuestions(gameID) {
+  const game = games[gameID];
+  let query = "SELECT * FROM questions WHERE (";
+
+  let queryParts = [];
+  let args = [];
+  for (const category of game.categories) {
+    queryParts.push("category = $" + (args.length + 1).toString() +
+      " AND (guild = '" + game.guild + "' OR guild = 'global' OR (guild = 'private' AND creator = '" + game.creator + "'))");
+    args.push(category);
+  }
+
+  query += queryParts.join(" OR ") + ")";
+
+  query += " ORDER BY RANDOM() LIMIT 100";
+
+  // console.log(query);
+  // console.log(args);
+  return (await pool.query(query, args)).rows;
 }
 
 async function sendQuestion(channel, question) {
@@ -166,10 +206,10 @@ async function sendQuestion(channel, question) {
         else
           message.channel.send(maxPlayers.map((player, i) => i == maxPlayers.length - 1 ? "and " + player.name : player.name).join(", ") + " have finished first with " + 10 + " points.");
       } else
-        sendQuestion(message.channel, getQuestion(message.channel.nsfw));
+        sendQuestion(message.channel, getQuestion(message.channel.id));
     }
   });
-  
+
   collector.on('end', reaction => {
     message.channel.send("No reactions, so I assume you're not gonna play.");
   });
@@ -198,7 +238,11 @@ module.exports = {
         return message.channel.send(keys.join("\n"), { split: { "maxLength": 2000 } });
         break;
       case "init":
-        games[message.channel.id] = { state: "starting", starter: message.author.id, players: {} }
+        games[message.channel.id] = { state: "starting", starter: message.author.id, players: {}, guild: message.guild.id };
+        args.shift();
+        games[message.channel.id].categories = args;
+        console.log(await getQuestions(message.channel.id));
+        games[message.channel.id].questions = await getQuestions(message.channel.id);
         message.channel.send("Everyone who wants to play, react here!").then(async (msg) => {
           let reactG = await msg.react("🎮");
           let reactS = await msg.react("⭐");
@@ -226,7 +270,7 @@ module.exports = {
               //let image = await message.channel.send(new MessageAttachment(canvas.toBuffer('image/jpeg', { quality: 0.5 })));
               let image = await message.channel.send(new MessageAttachment(canvas.toBuffer('image/png', { compressionLevel: 6, filters: canvas.PNG_ALL_FILTERS })));
               games[message.channel.id].toDelteI = image;
-              sendQuestion(message.channel, getQuestion(message.channel.nsfw));
+              sendQuestion(message.channel, getQuestion(message.channel.id));
             }
           })
           // collector.on("end", () => { console.log("collector ended."); reactG.remove(); reactS.remove(); })
@@ -257,7 +301,7 @@ module.exports = {
         //let image = await message.channel.send(new MessageAttachment(canvas.toBuffer('image/jpeg', { quality: 0.5 })));
         let image = await message.channel.send(new MessageAttachment(canvas.toBuffer('image/png', { compressionLevel: 6, filters: canvas.PNG_ALL_FILTERS })));
         games[message.channel.id].toDelteI = image;
-        sendQuestion(message.channel, getQuestion(message.channel.nsfw));
+        sendQuestion(message.channel, getQuestion(message.channel.id));
         break;
       default:
         return message.channel.send(this.help)
