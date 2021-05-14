@@ -8,12 +8,12 @@ let listeningUsers = {
 	//serverId: Set(userId)
 }
 
-const objectMap = (obj, fn) =>
-			Object.fromEntries(
-				Object.entries(obj).map(
-				([k, v], i) => [k, fn(v, k, i)]
-				)
-			)
+function objectMap(object, mapFn) {
+	return Object.keys(object).reduce(function(result, key) {
+	  	result[key] = mapFn(object[key])
+	  	return result
+	}, {})
+}
 
 try {
 	listeningUsers = JSON.parse(fs.readFileSync('listeningUsers.json'));	
