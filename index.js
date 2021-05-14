@@ -43,9 +43,10 @@ client.on('voiceStateUpdate', (oldState, newState) => {
 		// User Joins a voice channel
 		if (listeningUsers.hasOwnProperty(newState.guild.id)) {
 			listeningUsers[newState.guild.id].forEach(userId => {
-				client.users.fetch(userId).then(user => {
-					user.send("VC! " + newState.member.displayName + " in " + newState.guild.name + " -> " + newState.channel.name + ".");
-				});
+				if (userId !== newState.member.id)
+					client.users.fetch(userId).then(user => {
+						user.send("VC! " + newState.member.displayName + " in " + newState.guild.name + " -> " + newState.channel.name + ".");
+					});
 			});
 		}
 	} else if (newState.channel === null) {
