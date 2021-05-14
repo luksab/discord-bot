@@ -23,7 +23,9 @@ for (const file of commandFiles) {
 
 client.once('ready', () => {
 	console.log('Ready!');
-	client.users.cache.get(client.owner).send("Ready!");
+	client.users.fetch(client.owner).then(user => {
+		user.send("Ready!");
+	});
 });
 
 client.once('reconnecting', () => {
@@ -33,6 +35,26 @@ client.once('reconnecting', () => {
 client.once('disconnect', () => {
 	console.log('Disconnect!');
 });
+
+client.on('voiceStateUpdate', (oldState, newState) => {
+	let listeningUsers = client.commands.get("vcping").listeningUsers;
+
+	if (oldState.channel === null && newState.channel !== null && newState.channel.members.size === 1) {
+		// User Joins a voice channel
+		if (listeningUsers.hasOwnProperty(newState.guild.id)) {
+			listeningUsers[newState.guild.id].forEach(userId => {
+				client.users.fetch(userId).then(user => {
+					user.send("VC! in " + newState.guild.name + " -> " + newState.channel.name + ".");
+				});
+			});
+		}
+	} else if (newState.channel === null) {
+		// User leaves a voice channel
+		if (newState?.channel?.members?.size === 1) {
+			user.send("Everyone left! in " + newState.guild.name + " -> " + newState.channel.name + ".");
+		}
+	}
+})
 
 client.on('message', async message => {
 	if (message.author.bot) return;
