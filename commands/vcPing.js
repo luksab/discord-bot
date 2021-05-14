@@ -2,8 +2,29 @@ const {
 	invite,
 } = require('../config.json');
 
+const fs = require('fs');
+
 let listeningUsers = {
 	//serverId: Set(userId)
+}
+
+const objectMap = (obj, fn) =>
+			Object.fromEntries(
+				Object.entries(obj).map(
+				([k, v], i) => [k, fn(v, k, i)]
+				)
+			)
+
+try {
+	listeningUsers = JSON.parse(fs.readFileSync('listeningUsers.json'));	
+	console.log(listeningUsers);
+	listeningUsers = objectMap(listeningUsers, a => new Set(a));
+	console.log(listeningUsers);
+} catch (e) {
+	console.error(e);
+	listeningUsers = {
+		//serverId: Set(userId)
+	}		
 }
 
 module.exports = {
@@ -22,6 +43,10 @@ module.exports = {
 			listeningUsers[message.guild.id].add(message.author.id);
 			message.reply("I added you to the list.");
 		}
+		console.log(listeningUsers);
+
+		fs.writeFile("listeningUsers.json", 
+			JSON.stringify(objectMap(listeningUsers, s => Array.from(s))), function (err,data) {});
 	},
 	listeningUsers: listeningUsers,
 };
