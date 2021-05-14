@@ -44,14 +44,20 @@ client.on('voiceStateUpdate', (oldState, newState) => {
 		if (listeningUsers.hasOwnProperty(newState.guild.id)) {
 			listeningUsers[newState.guild.id].forEach(userId => {
 				client.users.fetch(userId).then(user => {
-					user.send("VC! in " + newState.guild.name + " -> " + newState.channel.name + ".");
+					user.send("VC! " + newState.member.displayName + " in " + newState.guild.name + " -> " + newState.channel.name + ".");
 				});
 			});
 		}
 	} else if (newState.channel === null) {
 		// User leaves a voice channel
-		if (newState?.channel?.members?.size === 1) {
-			user.send("Everyone left! in " + newState.guild.name + " -> " + newState.channel.name + ".");
+		if (oldState.channel && oldState.channel.members.size === 0) {
+			if (listeningUsers.hasOwnProperty(oldState.guild.id)) {
+				listeningUsers[oldState.guild.id].forEach(userId => {
+					client.users.fetch(userId).then(user => {
+						user.send("Everyone left! in " + oldState.guild.name + " -> " + oldState.channel.name + ".");
+					});
+				});
+			}
 		}
 	}
 })
