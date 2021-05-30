@@ -42,21 +42,35 @@ client.on('voiceStateUpdate', (oldState, newState) => {
 	if (oldState.channel === null && newState.channel !== null && newState.channel.members.size === 1) {
 		// User Joins a voice channel
 		if (listeningUsers.hasOwnProperty(newState.guild.id)) {
-			listeningUsers[newState.guild.id].forEach(userId => {
-				if (userId !== newState.member.id)
-					client.users.fetch(userId).then(user => {
-						user.send("VC! " + newState.member.displayName + " in " + newState.guild.name + " -> " + newState.channel.name + ".");
-					});
+			newState.channel.createInvite().then(link => {
+				const vcJoinEmbed = new Discord.MessageEmbed()
+					.setTitle(newState.guild.name)
+					.setURL(link.url)
+					.setAuthor(newState.member.displayName, newState.member.user.avatarURL(), link.url)
+					.setDescription(`Started VC in ${newState.channel.name}`)
+					.setThumbnail(newState.guild.iconURL())
+				listeningUsers[newState.guild.id].forEach(userId => {
+					if (userId !== newState.member.id)
+						client.users.fetch(userId).then(user => {
+							user.send(vcJoinEmbed);
+						})
+				});
 			});
 		}
 	} else if (newState.channel === null) {
 		// User leaves a voice channel
 		if (oldState.channel && oldState.channel.members.size === 0) {
 			if (listeningUsers.hasOwnProperty(oldState.guild.id)) {
+				const vcLeaveEmbed = new Discord.MessageEmbed()
+					.setTitle(newState.guild.name)
+					.setAuthor(newState.member.displayName, newState.member.user.avatarURL())
+					.setDescription(`Everyone left VC in ${oldState.channel.name}`)
+					.setThumbnail(oldState.guild.iconURL())
 				listeningUsers[oldState.guild.id].forEach(userId => {
-					client.users.fetch(userId).then(user => {
-						user.send("Everyone left! in " + oldState.guild.name + " -> " + oldState.channel.name + ".");
-					});
+					if (userId !== newState.member.id)
+						client.users.fetch(userId).then(user => {
+							user.send(vcLeaveEmbed);
+						});
 				});
 			}
 		}
