@@ -44,7 +44,7 @@ client.on('voiceStateUpdate', (oldState, newState) => {
 		if (listeningUsers.hasOwnProperty(newState.guild.id)) {
 			newState.channel.createInvite().then(link => {
 				const vcJoinEmbed = new Discord.MessageEmbed()
-					.setTitle(newState.guild.name)
+					.setTitle(newState.guild.name + ": " + newState.member.displayName)
 					.setURL(link.url)
 					.setAuthor(newState.member.displayName, newState.member.user.avatarURL(), link.url)
 					.setDescription(`Started VC in ${newState.channel.name}`)
@@ -86,7 +86,7 @@ client.on('message', async message => {
 
 client.on('message', async message => {
 	if (message.author.bot) return;
-	let found = message.content.match(new RegExp(/(?:^| |\.)(i(?:'?m| am))((?: \w+){1,3})(?:\.|\!|$)/im));
+	let found = message.content.match(new RegExp(/(?:^| |\.)(i(?:['`´‘’]?m| am))((?: \w+){1,3})(?:\.|\!|$)/im));
 	if (found)
 		message.channel.send("Hello" + found[2] + "! " + found[1] + " dad.");
 });
