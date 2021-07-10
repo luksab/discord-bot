@@ -44,10 +44,10 @@ client.on('voiceStateUpdate', (oldState, newState) => {
 		if (listeningUsers.hasOwnProperty(newState.guild.id)) {
 			newState.channel.createInvite().then(link => {
 				const vcJoinEmbed = new Discord.MessageEmbed()
-					.setTitle(newState.guild.name + ": " + newState.member.displayName)
+					.setTitle(newState.guild.name)
 					.setURL(link.url)
 					.setAuthor(newState.member.displayName, newState.member.user.avatarURL(), link.url)
-					.setDescription(`Started VC in ${newState.channel.name}`)
+					.setDescription(`${newState.member.displayName} Started VC in ${newState.channel.name}`)
 					.setThumbnail(newState.guild.iconURL())
 				listeningUsers[newState.guild.id].forEach(userId => {
 					if (userId !== newState.member.id)
